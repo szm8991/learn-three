@@ -1,13 +1,30 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stat from "three/examples/jsm/libs/stats.module";
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+// Instantiate a loader
+const loader = new GLTFLoader();
+//Scene
+const scene = new THREE.Scene()
+
+loader.load(
+  'src/model/car/scene.gltf',
+  function (gltf) {
+    gltf.scene.scale.set(0.3, 0.3, 0.3)
+    scene.add(gltf.scene);
+  },
+  function (xhr) {
+    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+  },
+  function (error) {
+    console.log('An error happened');
+
+  }
+);
 
 let w = window.innerWidth
 let h = window.innerHeight
 const stat = Stat()
-
-//Scene
-const scene = new THREE.Scene()
 
 //Camera
 let camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 100)
@@ -171,8 +188,8 @@ tick()
 function tick() {
   const time = clock.getElapsedTime()
 
-  dashLineGroup.position.y = -time * 0.2 % 3
-  treesGroup.position.z = time * 0.2 % 3
+  dashLineGroup.position.y = time * 0.2 % 3
+  treesGroup.position.z = -time * 0.2 % 3
   cloudGroup.position.x = Math.sin(time * 0.1) * 7
 
 
@@ -182,8 +199,6 @@ function tick() {
   stat.update()
   orbitControls.update()
 }
-
-
 //resize
 window.addEventListener('resize', () => {
   w = window.innerWidth
@@ -196,3 +211,5 @@ window.addEventListener('resize', () => {
   //Renderer
   renderer.setSize(w, h)
 })
+
+
